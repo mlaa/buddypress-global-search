@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Exit if accessed directly
 if (!defined('ABSPATH'))
 	exit;
@@ -24,7 +24,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		private $default_options = array(
 		   'enable-ajax-search'		=> 'yes',
 		);
-		
+
 		/* Includes
 		 * ===================================================================
 		 */
@@ -41,7 +41,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 			'template',
 			'filters',
 			'class.BBoss_Global_Search_Helper',
-			
+
 			//extensions
 			'plugins/search-cpt/index',
 			'plugins/awpcp/index',
@@ -58,7 +58,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		/* Plugin Options
 		 * ===================================================================
 		 */
-		
+
 		/**
 		 * This options array is setup during class instantiation, holds
 		 * default and saved options for the plugin.
@@ -66,11 +66,11 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		 * @var array
 		 */
 		public $options = array();
-		
+
 		/**
 		 * Whether the plugin is activated network wide.
-		 * 
-		 * @var boolean 
+		 *
+		 * @var boolean
 		 */
 		public $network_activated = false;
 
@@ -141,7 +141,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		public static function instance() {
 			// Store the instance locally to avoid private static replication
 			static $instance = null;
-			
+
 			// Only run these methods if they haven't been run previously
 			if (null === $instance) {
 				$instance = new BuddyBoss_Global_Search_Plugin();
@@ -250,7 +250,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		 */
 		private function setup_globals() {
 			$this->network_activated = $this->is_network_activated();
-		
+
 			// DEFAULT CONFIGURATION OPTIONS
 			$default_options = $this->default_options;
 
@@ -284,13 +284,13 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 			$this->assets_dir = $this->plugin_dir . 'assets';
 			$this->assets_url = $this->plugin_url . 'assets';
 		}
-		
+
 		/**
 		 * Check if the plugin is activated network wide(in multisite)
-		 * 
+		 *
 		 * @since 1.1.0
 		 * @access private
-		 * 
+		 *
 		 * @return boolean
 		 */
 		private function is_network_activated(){
@@ -319,7 +319,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 			if (( is_admin() || is_network_admin() ) && current_user_can('manage_options')) {
 				$this->load_admin();
 			}
-			
+
 			// Hook into BuddyPress init
 			add_action( 'bp_init', array( $this, 'bp_loaded' ) );
 		}
@@ -389,44 +389,44 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		 *
 		 * @uses BuddyBoss_Global_Search_Plugin::do_includes() Loads array of files in the include folder
 		 */
-		private function load_main() {		
+		private function load_main() {
 			$this->do_includes($this->main_includes);
-			
+
 			$this->search = BBoss_Global_Search_Helper::instance();
-			
+
 			// Front End Assets
 			if ( ! is_admin() && ! is_network_admin() ){
 				add_action( 'wp_enqueue_scripts', array( $this, 'assets' ) );
 			}
-                        
+
 			// Remove bp compose message deprecated autocomplete
 			remove_action( "bp_enqueue_scripts", "messages_add_autocomplete_js" );
 			// remove_action("wp_head","messages_add_autocomplete_css");
 		}
-		
+
 		/**
 		 * Load css/js files
-		 * 
+		 *
 		 * @since 1.0.0
 		 * @return void
 		 */
 		public function assets(){
 			wp_enqueue_style( 'jquery-ui', $this->assets_url . '/css/jquery-ui.min.css', '1.11.2' );
 			//wp_enqueue_style( 'buddypress-global-search', $this->assets_url . '/css/buddypress-global-search.css', '1.0.9' );
-			wp_enqueue_style( 'buddypress-global-search', $this->assets_url . '/css/buddypress-global-search.min.css', '1.0.9' );
-			
-			
+			//wp_enqueue_style( 'buddypress-global-search', $this->assets_url . '/css/buddypress-global-search.min.css', '1.0.9' );
+
+
 			wp_enqueue_script( 'jquery-ui-autocomplete' );
 			//wp_enqueue_script( 'buddypress-global-search', $this->assets_url . '/js/buddypress-global-search.js', array( 'jquery', 'jquery-ui-autocomplete' ), '1.0.4' );
 			wp_enqueue_script( 'buddypress-global-search', $this->assets_url . '/js/buddypress-global-search.min.js', array( 'jquery', 'jquery-ui-autocomplete' ), '1.0.4' );
-			
+
 			if(function_exists("bp_is_messages_component")) {
 				// Include the autocomplete JS for composing a message.
 				if ( bp_is_messages_component() && bp_is_current_action( 'compose' ) ) {
 					add_action( 'wp_head', array($this,'messages_autocomplete_init_jsblock') );
 				}
 			}
-                        
+
 			$data = array(
 				'nonce'		=> wp_create_nonce( 'bboss_global_search_ajax' ),
 				'action'	=> 'bboss_global_search_ajax',
@@ -435,14 +435,14 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 				'loading_msg'    => __("Loading Suggestions","buddypress-global-search"),
 				'enable_ajax_search'	=> $this->option( 'enable-ajax-search' ),
 			);
-                        
+
 			if(isset($_GET["s"])) {
 				$data["search_term"] = $_GET["s"];
 			}
-			
+
 			wp_localize_script( 'buddypress-global-search', 'BBOSS_GLOBAL_SEARCH', $data );
 		}
-                
+
 		/* Print inline JS for initializing the bp messages autocomplete.
 		 * Proper updated auto complete code for buddypress message compose (replacing autocompletefb script).
 		 * @todo : Why this inline code is not at proper file.
@@ -474,7 +474,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 															   jQuery.each(d, function(i, item) {
 																	   new_data[new_data.length] = item;
 															   });
-															   if (data != "") { 
+															   if (data != "") {
 																	response(new_data);
 															   }
 													   }
@@ -532,7 +532,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 
 			<?php
 		}
-		
+
 		/* Utility functions
 		 * ===================================================================
 		 */
@@ -581,7 +581,7 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 
 			return $option;
 		}
-		
+
 	}
 
 // End class BuddyBoss_Global_Search_Plugin
