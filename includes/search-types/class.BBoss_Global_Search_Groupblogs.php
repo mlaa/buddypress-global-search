@@ -2,7 +2,7 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if (!class_exists('BBoss_Global_Search_Activities')):
+if (!class_exists('BBoss_Global_Search_Groupblogs')):
 
 	/**
 	 *
@@ -11,8 +11,8 @@ if (!class_exists('BBoss_Global_Search_Activities')):
 	 *
 	 *
 	 */
-	class BBoss_Global_Search_Activities extends BBoss_Global_Search_Type {
-		private $type = 'activity';
+	class BBoss_Global_Search_Groupblogs extends BBoss_Global_Search_Type {
+		private $type = 'groupblogs';
 
 		/**
 		 * Insures that only one instance of Class exists in memory at any
@@ -20,7 +20,7 @@ if (!class_exists('BBoss_Global_Search_Activities')):
 		 *
 		 * @since 1.0.0
 		 *
-		 * @return object BBoss_Global_Search_Activities
+		 * @return object BBoss_Global_Search_Groupblogs
 		 */
 		public static function instance() {
 			// Store the instance locally to avoid private static replication
@@ -28,7 +28,7 @@ if (!class_exists('BBoss_Global_Search_Activities')):
 
 			// Only run these methods if they haven't been run previously
 			if (null === $instance) {
-				$instance = new BBoss_Global_Search_Activities();
+				$instance = new BBoss_Global_Search_Groupblogs();
 			}
 
 			// Always return the instance
@@ -77,7 +77,7 @@ if (!class_exists('BBoss_Global_Search_Activities')):
 						AND is_spam = 0
 						AND a.content LIKE '%%%s%%'
 						AND a.hide_sitewide = 0
-						AND a.type = 'activity_update'
+						AND a.type = 'new_blog_post'
 				";
 			$query_placeholder[] = $search_term;
 			return $wpdb->prepare( $sql, $query_placeholder );
@@ -99,7 +99,7 @@ if (!class_exists('BBoss_Global_Search_Activities')):
 						'id'	=> bp_get_activity_id(),
 						'type'	=> $this->type,
 						'title'	=> $this->search_term,
-						'html'	=> buddyboss_global_search_buffer_template_part( 'loop/activity', $template_type, false ),
+						'html'	=> buddyboss_global_search_buffer_template_part( 'loop/groupblog', $template_type, false ),
 					);
 
 					$this->search_results['items'][bp_get_activity_id()] = $result;

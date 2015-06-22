@@ -317,6 +317,9 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 				$items['forums'] = __( 'Forums', 'buddypress-global-search' );
 			}
 
+
+			$items['groupblogs'] = __( 'Groupblogs', 'buddypress-global-search' );
+
 			//other buddypress components
 			$bp_components = array(
 				'groups'		=> __( 'Groups', 'buddypress-global-search' ),

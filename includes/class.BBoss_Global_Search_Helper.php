@@ -140,6 +140,11 @@ if (!class_exists('BBoss_Global_Search_Helper')):
 					$this->search_helpers['activity'] = BBoss_Global_Search_Activities::instance();
 				}
 
+				if( in_array( 'groupblogs', $searchable_types ) ){
+					require_once( BUDDYBOSS_GLOBAL_SEARCH_PLUGIN_DIR . 'includes/search-types/class.BBoss_Global_Search_Groupblogs.php' );
+					$this->search_helpers['groupblogs'] = BBoss_Global_Search_Groupblogs::instance();
+				}
+
 				if( in_array( 'messages', $searchable_types ) ){
 					require_once( BUDDYBOSS_GLOBAL_SEARCH_PLUGIN_DIR . 'includes/search-types/class.BBoss_Global_Search_Messages.php' );
 					$this->search_helpers['messages'] = BBoss_Global_Search_Messages::instance();
