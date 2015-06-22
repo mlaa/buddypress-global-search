@@ -35,7 +35,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 			$capability = 'manage_options',
 			$form_action = 'options.php',
 			$plugin_settings_url;
-		
+
 		/**
 		 * Empty constructor function to ensure a single instance
 		 */
@@ -134,17 +134,17 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 			if ( $this->network_activated ) {
 				add_action('network_admin_edit_' . $this->plugin_slug, array( $this, 'save_network_settings_page' ));
 			}
-		
+
 			/**
 			 * Previously, settings were saved in options table to main site in network.
-			 * Now, since network settings are saved and retrieved using update_site_option/get_site_option, 
+			 * Now, since network settings are saved and retrieved using update_site_option/get_site_option,
 			 * all the sites who had the plugin activated netowrk wide, will loose their settings.
 			 * Let's display a message.
 			 */
 			if ( $this->network_activated && current_user_can( 'manage_network_options' ) ) {
 				add_action( 'network_admin_notices',	array( $this, 'admin_notice_update_settings' ) );
 			}
-			
+
 			add_action( 'admin_init', array( $this, 'admin_init' ) );
 			add_action( $this->menu_hook, array( $this, 'admin_menu' ) );
 
@@ -154,7 +154,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 
 		/**
 		 * Check if the plugin is activated network wide(in multisite).
-		 * 
+		 *
 		 * @return boolean
 		 */
 		private function is_network_activated() {
@@ -169,7 +169,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 		   }
 		   return $network_activated;
 		}
-		
+
 		/**
 		 * Register admin settings
 		 *
@@ -232,7 +232,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 									echo "<div class='updated'><p>" . __('Settings updated.', 'buddypress-edit-activity') . "</p></div>";
 								}
 								?>
-								
+
 								<?php settings_fields('buddyboss_global_search_plugin_options'); ?>
 								<?php do_settings_sections(__FILE__); ?>
 
@@ -254,7 +254,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 		 * @since BuddyPress Global Search (1.0.0)
 		 */
 		public function section_general() {
-			
+
 		}
 
 		/**
@@ -263,7 +263,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 		 * @since BuddyPress Global Search (1.0.0)
 		 */
 		public function section_style() {
-			
+
 		}
 
 		/**
@@ -281,7 +281,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 		/* Settings Page Options
 		 * ===================================================================
 		 */
-		
+
 		/**
 		 * Setting > Whether to have autosuggest search dropdown
 		 *
@@ -294,7 +294,7 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 			$checked = $enabled=='yes' ? ' checked' : '';
 			echo '<label><input type="checkbox" name="buddyboss_global_search_plugin_options[enable-ajax-search]" value="yes" '. $checked . '>' . __( 'Enable AutoSuggest dropdown in search inputs.', 'buddypress-global-search' ) . '</label>';
 		}
-		
+
 		/**
 		 * Setting > what to search?
 		 *
@@ -306,17 +306,17 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 			$items_to_search = $this->option('items-to-search');
 
 			echo '<p class="description">' . __('Search the following components:', 'buddypress-global-search') . '</p><br />';
-			
+
 			$items = array(
 				'posts'		=> __( 'Blog Posts', 'buddypress-global-search' ),
 				'members'	=> __( 'Members', 'buddypress-global-search' ),
 			);
-			
+
 			//forums?
 			if ( is_plugin_active( 'bbpress/bbpress.php' ) ) {
 				$items['forums'] = __( 'Forums', 'buddypress-global-search' );
 			}
-			
+
 			//other buddypress components
 			$bp_components = array(
 				'groups'		=> __( 'Groups', 'buddypress-global-search' ),
@@ -331,21 +331,21 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 					$items[$component] = $label;
 				}
 			}
-			
+
 			//now print those items
 			foreach( $items as $item=>$label ){
 				$checked = !empty( $items_to_search ) && in_array( $item, $items_to_search ) ? ' checked' : '';
 				echo "<label><input type='checkbox' value='{$item}' name='buddyboss_global_search_plugin_options[items-to-search][]' {$checked}>{$label}</label><br>";
 				do_action( 'bboss_global_search_settings_item_'.$item, $items_to_search );
 			}
-			
+
 			/**
 			 * Use the action below to add more things in the list of searchable items.
 			 * This will just print those new items in admin section. You'll have hook into other actions/filters to actually perform the search.
 			 */
 			do_action( 'bboss_global_search_settings_items_to_search', $items_to_search );
 		}
-		
+
 		public function add_action_links( $links, $file ) {
 			// Return normal links if not this plugin
 			if ( plugin_basename(basename(constant('BUDDYBOSS_GLOBAL_SEARCH_PLUGIN_DIR')) . '/buddypress-global-search.php') != $file ) {
@@ -380,26 +380,26 @@ if (!class_exists('BuddyBoss_Global_Search_Admin')):
 			wp_redirect($redirect_url);
 			die();
 		}
-		
+
 		public function admin_notice_update_settings(){
 			//hide notice if user has selected to do so
 			if( isset( $_GET['page'] ) && $_GET['page']==$this->plugin_slug && isset( $_GET['hidenotice'] ) ){
 				update_site_option( 'bboss_g_s_upgrade_from_1_0_7', 'yes' );
 			}
-			
+
 			//dont display it if user had hidden this message
 			if( get_site_option( 'bboss_g_s_upgrade_from_1_0_7', 'no' ) == 'yes' )
 				return;
-			
+
 			// Where are we redirecting to?
 			$base_url = trailingslashit( network_admin_url() ) . 'settings.php';
 			$settings_url = add_query_arg( array( 'page' => $this->plugin_slug ), $base_url );
 			$settings_link = "<a href='" . esc_url( $settings_url ) . "'>" . __( 'Settings', 'buddypress-global-search' ) . "</a>";
-			
+
 			$notice = sprintf( __( "Hey! BuddyPress Global Search has better integration with multisite now. Your settings might have been reset to defaults after update. Please check your %s.", 'buddypress-global-search' ), $settings_link );
 
 			$hide_notice_url = add_query_arg( array( 'hidenotice' => true ), $settings_url );
-			
+
 			echo "<div class='update-nag'><p>{$notice}</p><p><a href='{$hide_notice_url}' class='button'>". __( 'Hide this notice', 'buddypress-global-search' ) ."</a></div>";
 		}
 	}
