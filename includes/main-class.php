@@ -413,6 +413,9 @@ if (!class_exists('BuddyBoss_Global_Search_Plugin')):
 		public function assets(){
 			wp_enqueue_style( 'jquery-ui', $this->assets_url . '/css/jquery-ui.min.css', '1.11.2' );
 			//wp_enqueue_style( 'buddypress-global-search', $this->assets_url . '/css/buddypress-global-search.css', '1.0.9' );
+
+			// Disabled CSS for now. TODO: use get_template_directory_uri() in conjunction with a blank
+			// override file in the theme so I don't have to resort to this.
 			//wp_enqueue_style( 'buddypress-global-search', $this->assets_url . '/css/buddypress-global-search.min.css', '1.0.9' );
 
 
