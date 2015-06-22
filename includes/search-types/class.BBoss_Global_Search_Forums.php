@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -13,13 +13,13 @@ if (!class_exists('BBoss_Global_Search_Forums')):
 	 */
 	class BBoss_Global_Search_Forums extends BBoss_Global_Search_Type {
 		private $type = 'forums';
-		
+
 		/**
 		 * Insures that only one instance of Class exists in memory at any
 		 * one time. Also prevents needing to define globals all over the place.
 		 *
 		 * @since 1.0.0
-		 * 
+		 *
 		 * @return object BBoss_Global_Search_Forums
 		 */
 		public static function instance() {
@@ -34,7 +34,7 @@ if (!class_exists('BBoss_Global_Search_Forums')):
 			// Always return the instance
 			return $instance;
 		}
-		
+
 		/**
 		 * A dummy constructor to prevent this class from being loaded more than once.
 		 *
@@ -45,34 +45,34 @@ if (!class_exists('BBoss_Global_Search_Forums')):
 		function sql( $search_term, $only_totalrow_count=false ){
 			global $wpdb;
 			$query_placeholder = array();
-			
+
 			$sql = " SELECT ";
-			
+
 			if( $only_totalrow_count ){
 				$sql .= " COUNT( DISTINCT id ) ";
 			} else {
 				$sql .= " DISTINCT id , 'forums' as type, post_title LIKE '%%%s%%' AS relevance, post_date as entry_date  ";
 				$query_placeholder[] = $search_term;
 			}
-			
-			$sql .= " FROM 
-						{$wpdb->prefix}posts 
-					WHERE 
-						1=1 
+
+			$sql .= " FROM
+						{$wpdb->prefix}posts
+					WHERE
+						1=1
 						AND (
 								(
-										(post_title LIKE '%%%s%%') 
+										(post_title LIKE '%%%s%%')
 									OR 	(post_content LIKE '%%%s%%')
 								)
-							) 
-						AND post_type IN ( 'forum', 'topic', 'reply' ) 
-						AND post_status = 'publish' 
+							)
+						AND post_type IN ( 'topic', 'reply' )
+						AND post_status = 'publish'
 				";
 			$query_placeholder[] = $search_term;
 			$query_placeholder[] = $search_term;
 			return $wpdb->prepare( $sql, $query_placeholder );
 		}
-		
+
 		protected function generate_html( $template_type='' ){
 			$post_ids = array();
 			foreach( $this->search_results['items'] as $item_id=>$item_html ){
@@ -81,14 +81,14 @@ if (!class_exists('BBoss_Global_Search_Forums')):
 
 			//now we have all the posts
 			//lets do a wp_query and generate html for all posts
-			$qry = new WP_Query( array( 'post_type' =>array( 'forum', 'topic', 'reply' ), 'post__in'=>$post_ids, 'posts_per_page'=> -1 ) );
+			$qry = new WP_Query( array( 'post_type' =>array( 'topic', 'reply' ), 'post__in'=>$post_ids, 'posts_per_page'=> -1 ) );
 			if( $qry->have_posts() ){
 				while( $qry->have_posts() ){
 					$qry->the_post();
 
 					/**
 					 * The following will try to load loop/forum.php, loop/topic.php loop/reply.php(if reply is included).
-					 * 
+					 *
 					 */
 					$result_item = array(
 						'id'	=> get_the_ID(),
@@ -102,7 +102,7 @@ if (!class_exists('BBoss_Global_Search_Forums')):
 			}
 			wp_reset_postdata();
 		}
-		
+
 	}
 
 // End class BBoss_Global_Search_Posts
